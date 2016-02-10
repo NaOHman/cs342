@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "crypto-utils.h"
 
+static char mask1 = 0xf0;
+static char mask2 = 0x0f;
+
 char hexCharToByte(char aHexChar) {
   if (aHexChar >= '0' && aHexChar <= '9') {
     return aHexChar - '0';
@@ -14,6 +17,27 @@ char hexCharToByte(char aHexChar) {
   exit(1);
 }
 
+char byteToHexChar(char byte){
+    byte += '0';
+    if (byte > '9') {
+        byte += '9' - 'a';
+    }
+    return byte;
+}
+
+char* bytes2HexStr(char* buf, int blen) {
+    if (!buf || !blen){
+        return NULL;
+    }
+    char* hex = malloc(blen * 2);
+    for (int i=0; i<blen; i++){
+        char bytes1 = buf[i] & mask1;
+        char bytes2 = (buf[i] & mask2) >> 4;
+        hex[i*2] = byteToHexChar(bytes1);
+        hex[i*2 + 1] = byteToHexChar(bytes2);
+    }
+    return hex;
+}
 // returns a malloc'd byte buffer, caller frees
 char* hexStrToBytes(char* aHexStr, int* aOutLen) {
   // need valid input

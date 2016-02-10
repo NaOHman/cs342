@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include "crypto-utils.h"
 
-static char mask1 = 0xf0;
-static char mask2 = 0x0f;
+static char mask = 0xF;
 
 char hexCharToByte(char aHexChar) {
   if (aHexChar >= '0' && aHexChar <= '9') {
@@ -25,17 +24,16 @@ char byteToHexChar(char byte){
     return byte;
 }
 
-char* bytes2HexStr(char* buf, int blen) {
+char* bytesToHexStr(char* buf, int blen) {
     if (!buf || !blen){
         return NULL;
     }
-    char* hex = malloc(blen * 2);
+    char* hex = malloc(blen * 2 + 1);
     for (int i=0; i<blen; i++){
-        char bytes1 = buf[i] & mask1;
-        char bytes2 = (buf[i] & mask2) >> 4;
-        hex[i*2] = byteToHexChar(bytes1);
-        hex[i*2 + 1] = byteToHexChar(bytes2);
+        hex[i*2] = byteToHexChar((buf[i] >> 4) & mask);
+        hex[i*2 + 1] = byteToHexChar(buf[i] & mask);
     }
+    hex[blen*2 + 1] = '\0';
     return hex;
 }
 // returns a malloc'd byte buffer, caller frees

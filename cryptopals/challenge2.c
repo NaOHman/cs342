@@ -40,7 +40,8 @@ int main(int argc, char *argv[]) {
     printf("Failure! Couldn't alloc buffer for xored string.\n");
     return 1;
   }
-  char *hexStr = bytesToHexStr(xored, bytesLen1);
+  printf("conv\n");
+  char *hexStr = bytesToHexStr(xored, bytesLen1); //failing here
   printf("%s\n", xored);
   printf("%s\n", hexStr);
   if (strcmp(sOutputStr, hexStr) == 0) {

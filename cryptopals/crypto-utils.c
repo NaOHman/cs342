@@ -16,26 +16,23 @@ char hexCharToByte(char aHexChar) {
   exit(1);
 }
 
-char byteToHexChar(char byte){
-    byte += '0';
-    if (byte > '9') {
-        byte += '9' - 'a';
-    }
-    return byte;
-}
-
 char* bytesToHexStr(char* buf, int blen) {
     if (!buf || !blen){
-        return NULL;
+        printf("Error Null buffer");
+        exit(1);
     }
-    char* hex = malloc(blen * 2 + 1);
+    char *hx_ptr, *hex = malloc(blen * 2 + 1);
+    if (!hex){
+        printf("could not malloc new string");
+        exit(1);
+    }
     for (int i=0; i<blen; i++){
-        hex[i*2] = byteToHexChar((buf[i] >> 4) & mask);
-        hex[i*2 + 1] = byteToHexChar(buf[i] & mask);
+        hx_ptr += sprintf(hx_ptr, "%02x", buf[i]);
     }
-    hex[blen*2 + 1] = '\0';
+    *hx_ptr = '\0';
     return hex;
 }
+
 // returns a malloc'd byte buffer, caller frees
 char* hexStrToBytes(char* aHexStr, int* aOutLen) {
   // need valid input

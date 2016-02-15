@@ -25,14 +25,15 @@ char* xorBuf(char* buf1, char* buf2, int blen) {
 int main(int argc, char *argv[]) {
   int bytesLen1 = 0;
   int bytesLen2 = 0;
+  int bytesLen3 = 0;
   char *bytes1 = hexStrToBytes(sInStr1, &bytesLen1);
   char *bytes2 = hexStrToBytes(sInStr2, &bytesLen2);
-  char *outbytes = hexStrToBytes(sOutputStr, NULL);
-  if (!bytes1 || !bytes2) {
+  char *outbytes = hexStrToBytes(sOutputStr, &bytesLen3);
+  if (!bytes1 || !bytes2 || !outbytes) {
     printf("Failure! Couldn't convert hex to bytes.\n");
     return 1;
   }
-  if (bytesLen1 != bytesLen2){
+  if (bytesLen1 != bytesLen2 || bytesLen2 != bytesLen3){
       printf("Failure! buffers must be the same length");
   }
   char *xored = xorBuf(bytes1, bytes2, bytesLen1);
@@ -40,17 +41,15 @@ int main(int argc, char *argv[]) {
     printf("Failure! Couldn't alloc buffer for xored string.\n");
     return 1;
   }
-  printf("conv\n");
-  char *hexStr = bytesToHexStr(xored, bytesLen1); //failing here
-  printf("%s\n", xored);
-  printf("%s\n", hexStr);
-  if (strcmp(sOutputStr, hexStr) == 0) {
+  if (strncmp(xored, outbytes,bytesLen2) == 0) {
     printf("Success!\n");
   } else {
     printf("Failure!\n");
   }
 
-  free(hexStr);
+  free(bytes1);
+  free(bytes2);
+  free(outbytes);
   free(xored);
   return 0;
 }

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "crypto-utils.h"
+#include "xor-utils.h"
 
 static char mask = 0xF;
 
@@ -72,4 +73,15 @@ char* hexStrToBytes(char* aHexStr, int* aOutLen) {
   }
 
   return outBuf;
+}
+
+double *readFreqMap(FILE* file) {
+  double* freqMap = malloc(sizeof(double) * BYTE_SIZE);
+  double freq;
+  char ch;
+  memset(freqMap, 0, BYTE_SIZE * sizeof(double));
+  while (fscanf(file, "%c%*c%lf%*c", &ch, &freq) == 2) {
+    freqMap[ch] = freq;
+  }
+  return freqMap;
 }

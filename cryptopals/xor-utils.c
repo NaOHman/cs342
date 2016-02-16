@@ -3,6 +3,7 @@
 #include "xor-utils.h"
 #include "crypto-utils.h"
 
+//encrypts buffer buf with xor mask mask 
 unsigned char* singleXOR(unsigned char* buf, unsigned char mask, int blen) {
     unsigned char *bout = (unsigned char *) malloc(blen + 1); 
     if (!bout){
@@ -16,17 +17,20 @@ unsigned char* singleXOR(unsigned char* buf, unsigned char mask, int blen) {
     return bout;
 }
 
-unsigned char* encryptRepeatingXOR(unsigned char *buf, unsigned char *key) {
-    int len = strlen(buf);
+//encrypts a string with the repeating xor key key, both str and key are 
+//expected to be null terminated
+unsigned char* encryptRepeatingXOR(unsigned char *str, unsigned char *key) {
+    int len = strlen(str);
     int klen = strlen(key);
     unsigned char *bout = (unsigned char *) malloc(len + 1); //no sizeof because the buff is a byte buffer
     for (int i=0;i<len;i++){
-        bout[i] = buf[i] ^ key[i % klen];
+        bout[i] = str[i] ^ key[i % klen];
     }
     bout[len] = '\0';
     return bout;
 }
 
+//the likelyhood that some text is english
 double scoreText(unsigned char *text, int tlen, double* freqMap) {
     double score = 0.0;
     for (int i=0;i<tlen;i++){
@@ -35,7 +39,8 @@ double scoreText(unsigned char *text, int tlen, double* freqMap) {
     return score;
 }
 
-unsigned char* highScore(unsigned char *text, int len, double* freqMap, unsigned char* key, double* score){
+//Cracks an encrypted message and returns the result
+unsigned char* crackXOR(unsigned char *text, int len, double* freqMap, unsigned char* key, double* score){
     char* decrypted;
     *score = 0;
     double highestFreq = 0;

@@ -75,13 +75,24 @@ char* hexStrToBytes(char* aHexStr, int* aOutLen) {
   return outBuf;
 }
 
-double *readFreqMap(FILE* file) {
+/**
+ * Reads a frequency map from a the given filename such
+ * that map['a'] = the frequency of a. Prints error and
+ * exits if unable to read the file
+ */
+double *readFreqMap(const char* filename) {
+  FILE* freqFile = fopen(filename, "r");
+  if (!freqFile) {
+    printf("Couldn't open file %s", filename);
+    exit(1);
+  }
   double* freqMap = malloc(sizeof(double) * BYTE_SIZE);
   double freq;
   char ch;
   memset(freqMap, 0, BYTE_SIZE * sizeof(double));
-  while (fscanf(file, "%c%*c%lf%*c", &ch, &freq) == 2) {
+  while (fscanf(freqFile, "%c%*c%lf%*c", &ch, &freq) == 2) {
     freqMap[ch] = freq;
   }
+  fclose(freqFile);
   return freqMap;
 }

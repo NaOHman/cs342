@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -g
+CFLAGS=-g
 
 all : challenge1 challenge2 challenge3 challenge4 challenge5
 

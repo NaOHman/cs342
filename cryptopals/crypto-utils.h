@@ -6,4 +6,4 @@ char* hexStrToBytes(char* aHexStr, int* aOutLen);
 
 char* bytesToHexStr(char* buf, int blen);
 
-double *readFreqMap(FILE* file);
+double *readFreqMap(const char* file);

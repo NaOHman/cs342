@@ -1,41 +1,43 @@
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 #include "crypto-utils.h"
 #include "base64.h"
 #include "xor-utils.h"
 
 // Frequencies from http://fitaly.com/board/domper3/posts/136.html
-// Compile with: gcc challenge2.c base64.c crypto-utils.c -g -o challenge2
 
 #define FREQ_FILE "frequencies.txt"
 #define TEST_FILE "encrypted_strings.txt"
 #define N_LINES 327
-#define LINE_LEN 61
+#define READ_LEN 62
 
-char** parseTestFile(FILE* file, int *linelen){
-    char** lines = (char**) malloc(N_LINES * sizeof(char*));
-    char* line = (char*) malloc(LINE_LEN);
+unsigned char* findMessage(FILE* file, double* freqMap, unsigned char* key, int* lineno){
     int len;
-    size_t cap;
+    double highest = 0.0, testscore;
+    unsigned char testkey, *message;
+    *lineno = 0;
     for (int i=0; i<N_LINES; i++){
-        if ((len = getline(&line, &cap, file)) <= 0) {
+        unsigned char* line = (unsigned char*) malloc(READ_LEN); //one for \n one for \0
+        //read line
+        if (!fgets(line, READ_LEN, file)) { //line+2 to capture \n
             printf("Error parsing file");
             exit(1);
         }
-        if (line[len-1] == '\n')
-            line[len-1] = '\0';
-        lines[i] = hexStrToBytes(line, linelen);
-    }
-    return lines;
-}
-
-char* findMessage(char** lines, int len, double* freqMap, char* key, int* lineno){
-    *lineno = 0;
-    double highest = 0.0, testscore;
-    char testkey, *message;
-    for(int i=0; i<N_LINES; i++){
-        char* testMsg = highScore(lines[i], len, freqMap, &testkey, &testscore);
+        //remove newline char
+        for(int j=0; j<READ_LEN; j++){
+            if (line[READ_LEN-j] == '\n'){
+                line[READ_LEN-j] = '\0';
+            }
+        }
+        //convert to bytes
+        unsigned char* bytes = hexStrToBytes(line, &len);
+        if (!line) {
+            printf("Could not convert line to bytes");
+            exit(1);
+        }
+        //get likely key
+        unsigned char* testMsg = highScore(bytes, len, freqMap, &testkey, &testscore);
         if (testscore > highest){
             highest = testscore;
             *lineno = i;
@@ -44,6 +46,8 @@ char* findMessage(char** lines, int len, double* freqMap, char* key, int* lineno
         } else {
             free(testMsg);
         }
+        //cleanup
+        free(line);
     }
     return message;
 }
@@ -63,14 +67,12 @@ int main(int argc, char *argv[]) {
         printf("Couldn't open file %s", TEST_FILE);
         exit(1);
     }
-    char key;
-    int lineno, len;
-    char** lines = parseTestFile(testFile, &len);
+    unsigned char key;
+    int lineno;
+    unsigned char* message = findMessage(testFile, freqMap, &key, &lineno);
     fclose(testFile);
-    char* message = findMessage(lines, len, freqMap, &key, &lineno);
     printf("The message is on line %d: %s\n",lineno, message);
     printf("The key is: %c\n", key);
-    free(lines);
     free(message);
     free(freqMap);
     return 0;

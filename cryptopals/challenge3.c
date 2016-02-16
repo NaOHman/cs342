@@ -6,7 +6,6 @@
 #include "xor-utils.h"
 
 // Frequencies from http://fitaly.com/board/domper3/posts/136.html
-// Compile with: gcc challenge2.c base64.c crypto-utils.c -g -o challenge2
 
 #define FREQ_FILE "frequencies.txt"
 
@@ -28,7 +27,7 @@ int main(int argc, char *argv[]) {
     }
     char key;
     double score;
-    char* message = highScore(inputBytes, blen, freqMap, &key, &score);
+    char *message = highScore(inputBytes, blen, freqMap, &key, &score);
     printf("The message is: %s\n", message);
     printf("The key is: %c\n", key);
     free(inputBytes);

@@ -3,11 +3,11 @@
 #define XORUTILS
 #define BYTE_SIZE 256
 
-char* encryptRepeatingXOR(char *buf, char *key);
+unsigned char* encryptRepeatingXOR(unsigned char *buf, unsigned char *key);
 
-double scoreText(char *text, int tlen, double* freqMap);
+double scoreText(unsigned char *text, int tlen, double* freqMap);
 
-char* singleXOR(char* buf, char mask, int blen);
+unsigned char* singleXOR(unsigned char* buf, unsigned char mask, int blen);
 
-char* highScore(char *text, int tlen, double* freqMap, char* key, double* score);
+unsigned char* highScore(unsigned char *text, int tlen, double* freqMap, unsigned char* key, double* score);
 #endif

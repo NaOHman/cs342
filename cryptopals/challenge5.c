@@ -4,8 +4,6 @@
 #include "crypto-utils.h"
 #include "xor-utils.h"
 
-// Compile with: gcc challenge2.c base64.c crypto-utils.c -g -o challenge2
-
 static char* key = "ICE";
 static char* sInStr = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
 

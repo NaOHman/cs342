@@ -4,8 +4,8 @@
 #include "crypto-utils.h"
 
 //encrypts buffer buf with xor mask mask 
-unsigned char* singleXOR(unsigned char* buf, unsigned char mask, int blen) {
-    unsigned char *bout = (unsigned char *) malloc(blen + 1); 
+char* singleXOR(char* buf, char mask, int blen) {
+    char *bout = (char *) malloc(blen); 
     if (!bout){
         printf("Failed to malloc buffer");
         exit(1);
@@ -13,46 +13,43 @@ unsigned char* singleXOR(unsigned char* buf, unsigned char mask, int blen) {
     for (int i=0; i<blen; i++){
         bout[i] = buf[i] ^ mask;
     }
-    bout[blen] = '\0';
     return bout;
 }
 
 //encrypts a string with the repeating xor key key, both str and key are 
 //expected to be null terminated
-unsigned char* encryptRepeatingXOR(unsigned char *str, unsigned char *key) {
+char* encryptRepeatingXOR(char *str, char *key) {
     int len = strlen(str);
     int klen = strlen(key);
-    unsigned char *bout = (unsigned char *) malloc(len + 1); //no sizeof because the buff is a byte buffer
-    for (int i=0;i<len;i++){
+    char *bout = (char *) malloc(len); //no sizeof because the buff is a byte buffer
+    for (int i=0;i < len;i++){
         bout[i] = str[i] ^ key[i % klen];
     }
-    bout[len] = '\0';
     return bout;
 }
 
 //the likelyhood that some text is english
-double scoreText(unsigned char *text, int tlen, double* freqMap) {
+double scoreText(char *bytes, int blen, double* freqMap) {
     double score = 0.0;
-    for (int i=0;i<tlen;i++){
-        score += freqMap[text[i]];
+    for (int i=0;i<blen;i++){
+        score += freqMap[(unsigned char) bytes[i]];
     }
     return score;
 }
 
 //Cracks an encrypted message and returns the result
-unsigned char* crackXOR(unsigned char *text, int len, double* freqMap, unsigned char* key, double* score){
-    char* decrypted;
+char* crackXOR(char *bytes, int len, double* freqMap, char* key, double* score){
+    char* decrypted = NULL;
     *score = 0;
-    double highestFreq = 0;
     for (int c=0; c<BYTE_SIZE-1; c++){
-        unsigned char* testStr = singleXOR(text, (unsigned char) c, len);
-        double testScore = scoreText(testStr, len, freqMap);
+        char* testBytes = singleXOR(bytes, (char) c, len);
+        double testScore = scoreText(testBytes, len, freqMap);
         if (testScore > *score) {
-            decrypted = testStr;
+            decrypted = testBytes;
             *score = testScore;
-            *key = (unsigned char) c;
+            *key = (char) c;
         } else {
-            free(testStr);
+            free(testBytes);
         }
     }
     return decrypted;

@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     printf("Failure! Couldn't alloc buffer for xored string.\n");
     return 1;
   }
-  if (strncmp(xored, outbytes,bytesLen2) == 0) {
+  if (memcmp(xored, outbytes,bytesLen2) == 0) {
     printf("Success!\n");
   } else {
     printf("Failure!\n");

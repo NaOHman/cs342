@@ -13,6 +13,10 @@ static char* inputString = "1b37373331363f78151b7f2b783431333d78397828372d363c78
 int main(int argc, char *argv[]) {
     int blen;
     double *freqMap = readFreqMap(freqFile);
+    if (!freqMap) {
+        printf("Couldn't read frequencies");
+        exit(1);
+    }
     char* inputBytes = hexStrToBytes(inputString, &blen);
     if (!inputBytes || !blen) {
         printf("Error converting input to hex");

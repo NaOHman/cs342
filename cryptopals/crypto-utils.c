@@ -4,8 +4,6 @@
 #include "crypto-utils.h"
 #include "xor-utils.h"
 
-static char mask = 0xF;
-
 char hexCharToByte(char aHexChar) {
   if (aHexChar >= '0' && aHexChar <= '9') {
     return aHexChar - '0';
@@ -15,23 +13,6 @@ char hexCharToByte(char aHexChar) {
   }
   printf("Failure! Invalid hex character.\n");
   exit(1);
-}
-
-char* bytesToHexStr(char* buf, int blen) {
-    if (!buf || !blen){
-        printf("Error Null buffer");
-        exit(1);
-    }
-    char *hx_ptr, *hex = malloc(blen * 2 + 1);
-    if (!hex){
-        printf("could not malloc new string");
-        exit(1);
-    }
-    for (int i=0; i<blen; i++){
-        hx_ptr += sprintf(hx_ptr, "%02x", buf[i]);
-    }
-    *hx_ptr = '\0';
-    return hex;
 }
 
 // returns a malloc'd byte buffer, caller frees
@@ -91,7 +72,7 @@ double *readFreqMap(const char* filename) {
   char ch;
   memset(freqMap, 0, BYTE_SIZE * sizeof(double));
   while (fscanf(freqFile, "%c%*c%lf%*c", &ch, &freq) == 2) {
-    freqMap[ch] = freq;
+    freqMap[(int) ch] = freq;
   }
   fclose(freqFile);
   return freqMap;
